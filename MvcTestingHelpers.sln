@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{60F61B76-88B1-4F91-B5E1-385F6B91AE77}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\Moq.dll = Lib\Moq.dll
+		Lib\Moq.xml = Lib\Moq.xml
+		Lib\nunit.framework.dll = Lib\nunit.framework.dll
+		Lib\nunit.framework.xml = Lib\nunit.framework.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcTestingHelpers", "Src\MvcTestingHelpers.csproj", "{0855DDBA-A617-4594-A785-AEB5EF5B7C21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcTestingHelpers.Tests", "Tests\MvcTestingHelpers.Tests.csproj", "{E227F570-D7BA-4970-AD34-77D108EF23E9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0855DDBA-A617-4594-A785-AEB5EF5B7C21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0855DDBA-A617-4594-A785-AEB5EF5B7C21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0855DDBA-A617-4594-A785-AEB5EF5B7C21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0855DDBA-A617-4594-A785-AEB5EF5B7C21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E227F570-D7BA-4970-AD34-77D108EF23E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E227F570-D7BA-4970-AD34-77D108EF23E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E227F570-D7BA-4970-AD34-77D108EF23E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
