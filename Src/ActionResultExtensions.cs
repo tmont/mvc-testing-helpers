@@ -9,7 +9,11 @@ namespace MvcTestingHelpers {
 	public static class ActionResultExtensions {
 
 		#region A crappy NUnit-compatible assertion framework to remove the NUnit dependency
-		private class AssertionException : Exception {
+		/// <summary>
+		/// Thrown when one of the assertion extensions fails
+		/// </summary>
+		public class AssertionException : Exception {
+			/// <param name="message">The failure message</param>
 			public AssertionException(string message) : base(message) { }
 		}
 
@@ -34,7 +38,21 @@ namespace MvcTestingHelpers {
 
 		private class EqualToConstraint : IConstraint {
 			public bool IsValid(object actual) {
-				return actual != Expected;
+				if (actual == null) {
+					return Expected == null;
+				}
+
+				if (Expected == null) {
+					return false;
+				}
+
+				var expectedType = Expected.GetType();
+				var actualType = actual.GetType();
+				if (expectedType != actualType) {
+					return false;
+				}
+
+				return Expected.Equals(actual);
 			}
 
 			public object Expected { get; set; }
@@ -42,7 +60,7 @@ namespace MvcTestingHelpers {
 
 		private class GreaterThanOrEqualToConstraint : IConstraint {
 			public bool IsValid(object actual) {
-				return (int)actual > (int)Expected;
+				return (int)actual >= (int)Expected;
 			}
 
 			public object Expected { get; set; }
@@ -50,7 +68,7 @@ namespace MvcTestingHelpers {
 
 		private class InstanceOfConstraint : IConstraint {
 			public bool IsValid(object actual) {
-				return actual != null && actual.GetType() == Expected;
+				return actual != null && ((Type)Expected).IsInstanceOfType(actual);
 			}
 
 			public object Expected { get; set; }
@@ -85,6 +103,7 @@ namespace MvcTestingHelpers {
 		/// </summary>
 		public static string GetRedirectAction(this ActionResult result) {
 			var routeValues = result.As<RedirectToRouteResult>().RouteValues;
+			Assert.That(routeValues.ContainsKey("action"), "Route values dictionary does not contain a key for \"action\"");
 			return routeValues["action"].ToString();
 		}
 
@@ -98,7 +117,7 @@ namespace MvcTestingHelpers {
 			var modelState = result.As<ViewResult>().ViewData.ModelState;
 
 			Assert.That(modelState.ContainsKey(key), "Model state does not contain key \"" + key + "\"");
-			Assert.That(modelState.Count, Is.GreaterThanOrEqualTo(index + 1), "The model state does not contain an error at index " + index);
+			Assert.That(modelState[key].Errors.Count, Is.GreaterThanOrEqualTo(index + 1), "The model state does not contain an error at index " + index);
 			Assert.That(modelState[key].Errors[index].Exception, Is.InstanceOf<TException>(), string.Format("Error at index {0} is not an instanceof {1}", index, typeof(TException).Name));
 		}
 
@@ -109,11 +128,11 @@ namespace MvcTestingHelpers {
 		/// <param name="key">The model state key</param>
 		/// <param name="message">The error message</param>
 		/// <param name="index">The error index</param>
-		public static void AssertModelStateError(this ActionResult result, string key, string message, int index) {
+		public static void AssertModelStateError(this ActionResult result, string key, int index, string message) {
 			var modelState = result.As<ViewResult>().ViewData.ModelState;
 
 			Assert.That(modelState.ContainsKey(key), "Model state does not contain key \"" + key + "\"");
-			Assert.That(modelState.Count, Is.GreaterThanOrEqualTo(index), "The model state does not contain an error at index " + index);
+			Assert.That(modelState[key].Errors.Count, Is.GreaterThanOrEqualTo(index + 1), "The model state does not contain an error at index " + index);
 			Assert.That(modelState[key].Errors[index].ErrorMessage, Is.EqualTo(message), string.Format("Error messages do not match\nExpected: {0}\nActual:   {1}", message, modelState[key].Errors[index].ErrorMessage));
 		}
 
@@ -125,9 +144,11 @@ namespace MvcTestingHelpers {
 		public static void AssertRouteValues(this ActionResult result, object expectedRouteValues) {
 			var actualRouteValues = result.As<RedirectToRouteResult>().RouteValues;
 
-			const string message = "The route value with index \"{0}\" was not equal to the expected route value";
+			const string message = "The route value with index \"{0}\" was not equal to the expected route value: was {1} but got {2}";
 			foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(expectedRouteValues)) {
-				Assert.That(actualRouteValues[prop.Name], Is.EqualTo(prop.GetValue(expectedRouteValues)), string.Format(message, prop.Name));
+				var actual = actualRouteValues[prop.Name];
+				var expected = prop.GetValue(expectedRouteValues);
+				Assert.That(actual, Is.EqualTo(expected), string.Format(message, prop.Name, actual, expected));
 			}
 		}
 

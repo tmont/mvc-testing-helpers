@@ -11,9 +11,9 @@ namespace MvcTestingHelpers.Tests {
 		[Test]
 		public void Should_call_post_action() {
 			var result = executor.ExecuteActionWithFilters(
-				c => c.PostActionMethod("hello world"), 
+				c => c.PostActionMethod("hello world"),
 				new MyController("foo"),
-				() => new MyActionInvoker(), 
+				() => new MyActionInvoker(),
 				HttpVerbs.Post
 			);
 
@@ -21,7 +21,8 @@ namespace MvcTestingHelpers.Tests {
 		}
 
 		[Test]
-		public void Should_properly_instantiate_controller() {
+		public void Should_properly_instantiate_controller()
+		{
 			var result = executor.ExecuteActionWithFilters(c => c.PostActionMethod(null), new MyController("foo"), () => new MyActionInvoker(), HttpVerbs.Post);
 			Assert.That(result.GetModel<MyModel>().HelloWorld, Is.EqualTo("foo"));
 		}

@@ -3,10 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{60F61B76-88B1-4F91-B5E1-385F6B91AE77}"
 	ProjectSection(SolutionItems) = preProject
-		Lib\Moq.dll = Lib\Moq.dll
-		Lib\Moq.xml = Lib\Moq.xml
-		Lib\nunit.framework.dll = Lib\nunit.framework.dll
-		Lib\nunit.framework.xml = Lib\nunit.framework.xml
+		Lib\System.Web.Mvc.dll = Lib\System.Web.Mvc.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcTestingHelpers", "Src\MvcTestingHelpers.csproj", "{0855DDBA-A617-4594-A785-AEB5EF5B7C21}"

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 using System.Web;
 using System.Web.Routing;
 using Castle.DynamicProxy;
+using FakeN.Web;
 
 namespace MvcTestingHelpers {
 	/// <summary>
@@ -93,9 +93,9 @@ namespace MvcTestingHelpers {
 				}
 			);
 
-			var invoker = (TInvoker)proxyGenerator.CreateClassProxy(typeof(TInvoker), GetParametersForMockInvoker(newInvokerExpression), interceptor);
+			object[] parametersForMockInvoker = GetParametersForMockInvoker(newInvokerExpression);
 
-			controller.ActionInvoker = invoker;
+			var invoker = (TInvoker)proxyGenerator.CreateClassProxy(typeof(TInvoker), parametersForMockInvoker, interceptor);
 
 			controller.ControllerContext = controllerContext ?? CreateControllerContext(controller, httpMethod);
 			controller.ActionInvoker = invoker;
@@ -124,14 +124,14 @@ namespace MvcTestingHelpers {
 		/// Creates an HttpSession for the HttpContext
 		/// </summary>
 		protected virtual HttpSessionStateBase CreateHttpSession() {
-			return new FakeHttpSession();
+			return new FakeHttpSessionState();
 		}
 
 		/// <summary>
 		/// Creates an HttpRequest for the HttpContext
 		/// </summary>
 		protected virtual HttpRequestBase CreateHttpRequest(HttpVerbs httpMethod) {
-			return new FakeHttpRequest(httpMethod);
+			return new FakeHttpRequest(method: httpMethod.ToString());
 		}
 
 		/// <summary>
@@ -178,62 +178,4 @@ namespace MvcTestingHelpers {
 				.ToArray();
 		}
 	}
-
-	/// <summary>
-	/// HttpContext implementation that is safe for MVC
-	/// </summary>
-	public class FakeHttpContext : HttpContextBase {
-		private readonly HttpRequestBase request;
-		private readonly HttpResponseBase response;
-		private readonly HttpSessionStateBase session;
-
-		/// <summary>
-		/// Creates an HttpContextBase implementation with default request, response and session
-		/// </summary>
-		public FakeHttpContext() : this(new FakeHttpRequest(HttpVerbs.Get), new FakeHttpResponse(), new FakeHttpSession()) { }
-
-		/// <summary>
-		/// Creates an HttpContextBase implementation with the given request, response and session
-		/// </summary>
-		public FakeHttpContext(HttpRequestBase request, HttpResponseBase response, HttpSessionStateBase session) {
-			this.request = request;
-			this.response = response;
-			this.session = session;
-		}
-
-		public override HttpRequestBase Request { get { return request; } }
-		public override HttpResponseBase Response { get { return response; } }
-		public override HttpSessionStateBase Session { get { return session; } }
-	}
-
-	/// <summary>
-	/// HttpRequest implementation that is safe for MVC
-	/// </summary>
-	public class FakeHttpRequest : HttpRequestBase {
-		private readonly HttpVerbs httpMethod;
-
-		/// <param name="httpMethod">The HTTP request method</param>
-		public FakeHttpRequest(HttpVerbs httpMethod) {
-			this.httpMethod = httpMethod;
-		}
-
-		public override string HttpMethod { get { return httpMethod.ToString(); } }
-		public override NameValueCollection Form { get { return new NameValueCollection(); } }
-		public override NameValueCollection Headers { get { return new NameValueCollection(); } }
-		public override NameValueCollection QueryString { get { return new NameValueCollection(); } }
-		public override string RawUrl { get { return "http://example.com/"; } }
-
-		public override void ValidateInput() { }
-	}
-
-	/// <summary>
-	/// HttpResponse implementation that is safe for MVC
-	/// </summary>
-	public class FakeHttpResponse : HttpResponseBase { }
-
-	/// <summary>
-	/// HttpSession implementation that is safe for MVC
-	/// </summary>
-	public class FakeHttpSession : HttpSessionStateBase { }
-
 }
