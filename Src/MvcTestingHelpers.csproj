@@ -73,7 +73,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionInvokerHook.cs" />
     <Compile Include="ActionResultExtensions.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ControllerActionInvokerInterceptor.cs" />
