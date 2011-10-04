@@ -21,8 +21,7 @@ namespace MvcTestingHelpers.Tests {
 		}
 
 		[Test]
-		public void Should_properly_instantiate_controller()
-		{
+		public void Should_properly_instantiate_controller() {
 			var result = executor.ExecuteActionWithFilters(c => c.PostActionMethod(null), new MyController("foo"), () => new MyActionInvoker(), HttpVerbs.Post);
 			Assert.That(result.GetModel<MyModel>().HelloWorld, Is.EqualTo("foo"));
 		}
@@ -44,6 +43,12 @@ namespace MvcTestingHelpers.Tests {
 		public void Should_use_activator_to_create_controller_and_action_invoker() {
 			var result = executor.ExecuteActionWithFilters<MyController>(c => c.Index());
 			Assert.That(result, Is.InstanceOf<ViewResult>());
+		}
+
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Expression must have one parameter which is the controller and invoke a method on the controller: e.g. controller => controller.MyActionMethod()")]
+		public void Should_require_valid_action_expression() {
+			executor.ExecuteActionWithFilters<MyController>(controller => controller.HttpContext);
 		}
 
 		#region Mocks

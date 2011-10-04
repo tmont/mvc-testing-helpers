@@ -93,7 +93,7 @@ namespace MvcTestingHelpers {
 				}
 			);
 
-			object[] parametersForMockInvoker = GetParametersForMockInvoker(newInvokerExpression);
+			var parametersForMockInvoker = GetParametersForMockInvoker(newInvokerExpression);
 
 			var invoker = (TInvoker)proxyGenerator.CreateClassProxy(typeof(TInvoker), parametersForMockInvoker, interceptor);
 
@@ -156,7 +156,7 @@ namespace MvcTestingHelpers {
 		}
 
 		private static void VerifyActionExpression<TController>(Expression<Func<TController, object>> expression) where TController : Controller {
-			if (expression.Parameters == null || expression.Parameters.Count != 1 || expression.Parameters[0].Type != typeof(TController) || !(expression.Body is MethodCallExpression)) {
+			if (!(expression.Body is MethodCallExpression)) {
 				throw new InvalidOperationException("Expression must have one parameter which is the controller and invoke a method on the controller: e.g. controller => controller.MyActionMethod()");
 			}
 		}

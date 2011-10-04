@@ -22,8 +22,7 @@ namespace MvcTestingHelpers {
 		/// </summary>
 		public void Intercept(IInvocation invocation) {
 			var handler = MethodHandlers
-				.Where(methodHandler => methodHandler.Method == invocation.Method.Name)
-				.SingleOrDefault();
+				.SingleOrDefault(methodHandler => methodHandler.Method == invocation.Method.Name);
 
 			if (handler != null) {
 				handler.HandleMethod(invocation);
