@@ -51,7 +51,25 @@ namespace MvcTestingHelpers.Tests {
 			executor.ExecuteActionWithFilters<MyController>(controller => controller.HttpContext);
 		}
 
+		[Test]
+		public void Should_resolve_parameters_for_action_invoker() {
+			var myController = new MyController();
+			executor.ExecuteActionWithFilters(controller => controller.Index(), myController, () => new MyActionInvoker(17));
+			Assert.That(myController.ActionInvoker, Has.Property("DummyInt").EqualTo(17));
+		}
+
+		[Test]
+		public void Should_allow_action_invoker_expressions_that_do_not_instantiate() {
+			var myController = new MyController();
+			executor.ExecuteActionWithFilters(controller => controller.Index(), myController, () => InvokerFactory.Invoker);
+			Assert.That(myController.ActionInvoker, Is.InstanceOf<ControllerActionInvoker>());
+		}
+
 		#region Mocks
+		static class InvokerFactory {
+			public static ControllerActionInvoker Invoker { get { return new MyActionInvoker(); } }
+		}
+
 		internal class MyController : Controller {
 			private readonly string defaultText;
 
@@ -80,7 +98,6 @@ namespace MvcTestingHelpers.Tests {
 		}
 
 		public class MyFilter : ActionFilterAttribute {
-
 			public static int InvocationCount { get; private set; }
 
 			public override void OnActionExecuting(ActionExecutingContext filterContext) {
@@ -88,7 +105,17 @@ namespace MvcTestingHelpers.Tests {
 			}
 		}
 
-		public class MyActionInvoker : ControllerActionInvoker { }
+		public class MyActionInvoker : ControllerActionInvoker {
+			public int DummyInt { get; set; }
+
+			public MyActionInvoker() {
+
+			}
+
+			public MyActionInvoker(int dummy) {
+				DummyInt = dummy;
+			}
+		}
 		internal class InternalActionInvoker : ControllerActionInvoker { }
 
 		internal class MyModel {
