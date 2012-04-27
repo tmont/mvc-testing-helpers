@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using NUnit.Framework;
 
+// ReSharper disable Asp.NotResolved
 namespace MvcTestingHelpers.Tests {
 	[TestFixture]
 	public class ControllerActionExecutorTests {
@@ -83,6 +84,7 @@ namespace MvcTestingHelpers.Tests {
 
 			[AcceptVerbs(HttpVerbs.Post)]
 			public ActionResult PostActionMethod(string text) {
+
 				return View(new MyModel { HelloWorld = text ?? defaultText });
 			}
 
@@ -124,6 +126,5 @@ namespace MvcTestingHelpers.Tests {
 		#endregion
 
 	}
-
-
 }
+// ReSharper restore Asp.NotResolved
